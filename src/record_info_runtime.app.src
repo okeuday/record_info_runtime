@@ -1,0 +1,5 @@
+{application, record_info_runtime,
+  [{description, "record_info functions callable during runtime"},
+   {vsn, "1.0.0"},
+   {modules, [record_info_runtime]},
+   {applications, [kernel]}]}.
