@@ -64,25 +64,25 @@
     }).
 
 parse_transform(Forms, _) ->
-    forms(Forms, [], #state{}).
+    forms_process(Forms, [], #state{}).
 
-forms([{eof, _} = EOF], L,
-      #state{records = []}) ->
+forms_process([{eof, _} = EOF], L,
+              #state{records = []}) ->
     % nothing to do (no records found)
     lists:reverse([EOF | L]);
-forms([{eof, _} = EOF], L,
-      #state{records = Records}) ->
+forms_process([{eof, _} = EOF], L,
+              #state{records = Records}) ->
     [{attribute, _, file, _} = FILE |
      NewForms] = lists:reverse([EOF,
                                 record_info_size(Records),
                                 record_info_fields(Records) | L]),
     [FILE, record_info_f_nowarn() | NewForms];
-forms([{attribute, _Line, record, {Name, _Fields}} = H | Forms], L,
-      #state{records = Records} = State) ->
-  forms(Forms, [H | L],
-        State#state{records = [Name | Records]});
-forms([H | Forms], L, State) ->
-    forms(Forms, [H | L], State).
+forms_process([{attribute, _Line, record, {Name, _Fields}} = H | Forms], L,
+              #state{records = Records} = State) ->
+  forms_process(Forms, [H | L],
+                State#state{records = [Name | Records]});
+forms_process([H | Forms], L, State) ->
+    forms_process(Forms, [H | L], State).
 
 record_info_f_nowarn() ->
     {attribute, 1, compile,
