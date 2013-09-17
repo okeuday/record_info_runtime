@@ -75,7 +75,8 @@ forms_process([{eof, _} = EOF], L,
     [{attribute, _, file, _} = FILE |
      NewForms] = lists:reverse([EOF,
                                 record_info_size(Records),
-                                record_info_fields(Records) | L]),
+                                record_info_fields(Records),
+                                record_new(Records) | L]),
     [FILE, record_info_f_nowarn() | NewForms];
 forms_process([{attribute, _Line, record, {Name, _Fields}} = H | Forms], L,
               #state{records = Records} = State) ->
@@ -90,19 +91,16 @@ record_info_f_nowarn() ->
       [{record_info_size, 1},
        {record_info_fields, 1}]}}.
 
-record_info_size(Records) ->
-    {function, 1, record_info_size, 1,
-     record_info_size_f([], Records)}.
+record_new(Records) ->
+    {function, 1, record_new, 1,
+     record_new_f([], Records)}.
 
-record_info_size_f(L, []) ->
+record_new_f(L, []) ->
     L;
-record_info_size_f(L, [Name | Records]) ->
-    record_info_size_f([{clause, 1,
-                         [{atom, 1, Name}], [],
-                         [{call, 1,
-                           {atom, 1, record_info},
-                           [{atom, 1, size},
-                            {atom, 1, Name}]}]} | L], Records).
+record_new_f(L, [Name | Records]) ->
+    record_new_f([{clause, 1,
+                   [{atom, 1, Name}], [],
+                   [{record, 1, Name, []}]} | L], Records).
 
 record_info_fields(Records) ->
     {function, 1, record_info_fields, 1,
@@ -117,4 +115,18 @@ record_info_fields_f(L, [Name | Records]) ->
                              {atom, 1, record_info},
                              [{atom, 1, fields},
                               {atom, 1, Name}]}]} | L], Records).
+
+record_info_size(Records) ->
+    {function, 1, record_info_size, 1,
+     record_info_size_f([], Records)}.
+
+record_info_size_f(L, []) ->
+    L;
+record_info_size_f(L, [Name | Records]) ->
+    record_info_size_f([{clause, 1,
+                         [{atom, 1, Name}], [],
+                         [{call, 1,
+                           {atom, 1, record_info},
+                           [{atom, 1, size},
+                            {atom, 1, Name}]}]} | L], Records).
 
