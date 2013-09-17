@@ -9,7 +9,8 @@
 %%% functions inserted are record_info_size/1 and record_info_fields/1, so
 %%% the record_info(size, _) and record_info(fields, _) can be called at
 %%% runtime, but without exported functions.  The unused function warning
-%%% is automatically turned on for the inserted functions.
+%%% is automatically turned off for the inserted functions, so they
+%%% don't necessarily need to be used.
 %%% @end
 %%%
 %%% BSD LICENSE
