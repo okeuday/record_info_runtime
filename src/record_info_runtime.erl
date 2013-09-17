@@ -89,8 +89,9 @@ forms_process([H | Forms], L, State) ->
 record_info_f_nowarn() ->
     {attribute, 1, compile,
      {nowarn_unused_function,
-      [{record_info_size, 1},
-       {record_info_fields, 1}]}}.
+      [{record_new, 1},
+       {record_info_fields, 1},
+       {record_info_size, 1}]}}.
 
 record_new(Records) ->
     {function, 1, record_new, 1,
