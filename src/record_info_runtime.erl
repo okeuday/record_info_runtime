@@ -77,7 +77,8 @@ forms_process([{eof, _} = EOF], L,
      NewForms] = lists:reverse([EOF,
                                 record_info_size(Records),
                                 record_info_fields(Records),
-                                record_new(Records) | L]),
+                                record_new(Records),
+                                records(Records) | L]),
     [FILE, record_info_f_nowarn() | NewForms];
 forms_process([{attribute, _Line, record, {Name, _Fields}} = H | Forms], L,
               #state{records = Records} = State) ->
@@ -89,9 +90,20 @@ forms_process([H | Forms], L, State) ->
 record_info_f_nowarn() ->
     {attribute, 1, compile,
      {nowarn_unused_function,
-      [{record_new, 1},
+      [{records, 0},
+       {record_new, 1},
        {record_info_fields, 1},
        {record_info_size, 1}]}}.
+
+records(Records) ->
+    {function, 1, records, 0,
+     [{clause, 1, [], [],
+       [records_f(lists:reverse(Records))]}]}.
+
+records_f([Name]) ->
+    {cons, 1,{atom, 1, Name}, {nil, 1}};
+records_f([Name | Records]) ->
+    {cons, 1, {atom, 1, Name}, records_f(Records)}.
 
 record_new(Records) ->
     {function, 1, record_new, 1,
