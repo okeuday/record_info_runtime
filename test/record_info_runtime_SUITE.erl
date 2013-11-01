@@ -13,11 +13,18 @@
          end_per_testcase/2]).
 
 %% test cases
--export([t_record_info_fieldtypes_test0/1]).
+-export([t_record_info_fieldtypes_test00/1,
+         t_record_info_fieldtypes_test01/1]).
 
 -compile([{parse_transform, record_info_runtime}]).
 
--record(test0,
+-record(test01,
+    {
+        field00 :: maybe_improper_list(integer(), integer()),
+        field01 :: {integer(), integer()}
+    }).
+
+-record(test00,
     {
         field00 = 1,
         field01 = undefined :: list(pos_integer()),
@@ -35,7 +42,9 @@
         field13 :: pos_integer(),
         field14 :: non_neg_integer(),
         field15 :: atom(),
-        field16 :: list(integer())
+        field16 :: list(integer()),
+        field17 :: list(#test01{}),
+        field18 :: #test01{}
     }).
 
 all() ->
@@ -43,7 +52,8 @@ all() ->
 
 groups() ->
     [{record_info_fieldtypes, [],
-      [t_record_info_fieldtypes_test0]}].
+      [t_record_info_fieldtypes_test00,
+       t_record_info_fieldtypes_test01]}].
 
 suite() ->
     [{ct_hooks, [cth_surefire]},
@@ -70,7 +80,7 @@ init_per_testcase(_TestCase, Config) ->
 end_per_testcase(_TestCase, Config) ->
     Config.
 
-t_record_info_fieldtypes_test0(_Config) ->
+t_record_info_fieldtypes_test00(_Config) ->
     FieldTypes = [{field00,undefined},
                   {field01,{list,[pos_integer]}},
                   {field02,{string,[]}},
@@ -87,7 +97,15 @@ t_record_info_fieldtypes_test0(_Config) ->
                   {field13,{pos_integer,[]}},
                   {field14,{non_neg_integer,[]}},
                   {field15,{atom,[]}},
-                  {field16,{list,[integer]}}],
-    FieldTypes = record_info_fieldtypes(test0),
+                  {field16,{list,[integer]}},
+                  {field17,{list,[{record,[test01]}]}},
+                  {field18,{record,[test01]}}],
+    FieldTypes = record_info_fieldtypes(test00),
+    ok.
+
+t_record_info_fieldtypes_test01(_Config) ->
+    FieldTypes = [{field00,{maybe_improper_list,[integer,integer]}},
+                  {field01,{tuple,[integer,integer]}}],
+    FieldTypes = record_info_fieldtypes(test01),
     ok.
 
