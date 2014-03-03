@@ -44,7 +44,8 @@
         field15 :: atom(),
         field16 :: list(integer()),
         field17 :: list(#test01{}),
-        field18 :: #test01{}
+        field18 :: #test01{},
+        field19 :: #test01{} | undefined
     }).
 
 all() ->
@@ -99,7 +100,8 @@ t_record_info_fieldtypes_test00(_Config) ->
                   {field15,{atom,[]}},
                   {field16,{list,[integer]}},
                   {field17,{list,[{record,[test01]}]}},
-                  {field18,{record,[test01]}}],
+                  {field18,{record,[test01]}},
+                  {field19,{union,[{record,[test01]},undefined]}}],
     FieldTypes = record_info_fieldtypes(test00),
     ok.
 
